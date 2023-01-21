@@ -31,7 +31,7 @@ object Expression
 object Execution
 
 sealed class InterpreterException : Exception() {
-    class Tokenization : InterpreterException()
+    class TokenizationException : InterpreterException()
     class ParsingException: InterpreterException()
     class ExecutionException : InterpreterException()
 }
@@ -59,3 +59,5 @@ fun main() {
         .onFailure { exception -> "Error while running interpreter: ${exception.message}"  } // InterpreterException
 }
 ```
+
+The Kotlin Team is [well aware](https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/result.md#representing-as-a-sealed-class) of this better structure for the `Result` type, and we might see it once [inline sealed classes](https://youtrack.jetbrains.com/issue/KT-27576/Support-inline-sealed-classes) are supported.
