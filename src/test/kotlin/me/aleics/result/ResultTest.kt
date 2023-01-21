@@ -112,4 +112,16 @@ class ResultTest {
         assertEquals(success.throwOnFailure(), "hello")
         assertFails { failure.throwOnFailure() }
     }
+
+    @Test
+    fun flatten() {
+        val exception = Exception("Something went wrong")
+        val success = Result.Success<Result<String, Exception>, Exception>(Result.Success("hello"))
+        val failureInSuccess = Result.Success<Result<String, Exception>, Exception>(Result.Failure(exception))
+        val failure = Result.Failure<Result<String, Exception>, Exception>(exception)
+
+        assertEquals(success.flatten(), Result.Success("hello"))
+        assertEquals(failureInSuccess.flatten(), Result.Failure(exception))
+        assertEquals(failure.flatten(), Result.Failure(exception))
+    }
 }

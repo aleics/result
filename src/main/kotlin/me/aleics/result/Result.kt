@@ -121,3 +121,8 @@ sealed class Result<T, E : Throwable> {
 
     abstract fun onSuccess(handler: (T) -> Unit): Result<T, E>
 }
+
+public fun <T, E: Exception> Result<Result<T, E>, E>.flatten(): Result<T, E> = when(this) {
+    is Result.Failure -> Result.Failure(exception)
+    is Result.Success -> value
+}
