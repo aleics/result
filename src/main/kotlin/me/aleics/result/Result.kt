@@ -1,8 +1,5 @@
 package me.aleics.result
 
-/**
- * 
- */
 sealed class Result<T, E : Throwable> {
 
     class Success<T, E : Throwable>(val value: T) : Result<T, E>() {
@@ -23,6 +20,8 @@ sealed class Result<T, E : Throwable> {
         override fun <R> mapOrElse(predicate: (T) -> R, fallback: (E) -> R): R = predicate(value)
 
         override fun <R> flatMap(predicate: (T) -> Result<R, E>): Result<R, E> = predicate(value)
+
+        override fun getOrElse(predicate: (E) -> T): T = value
 
         override fun throwOnFailure(): T = value
 
@@ -70,6 +69,8 @@ sealed class Result<T, E : Throwable> {
 
         override fun <R> flatMap(predicate: (T) -> Result<R, E>): Result<R, E> = Failure(exception)
 
+        override fun getOrElse(predicate: (E) -> T): T = predicate(exception)
+
         override fun toString(): String = exception.toString()
 
         override fun throwOnFailure() = throw exception
@@ -115,6 +116,8 @@ sealed class Result<T, E : Throwable> {
 
     abstract fun <R> flatMap(predicate: (T) -> Result<R, E>): Result<R, E>
 
+    abstract fun getOrElse(predicate: (E) -> T): T
+
     abstract fun throwOnFailure(): T
 
     abstract fun onFailure(handler: (E) -> Unit): Result<T, E>
@@ -122,7 +125,7 @@ sealed class Result<T, E : Throwable> {
     abstract fun onSuccess(handler: (T) -> Unit): Result<T, E>
 }
 
-public fun <T, E: Exception> Result<Result<T, E>, E>.flatten(): Result<T, E> = when(this) {
+fun <T, E: Exception> Result<Result<T, E>, E>.flatten(): Result<T, E> = when(this) {
     is Result.Failure -> Result.Failure(exception)
     is Result.Success -> value
 }

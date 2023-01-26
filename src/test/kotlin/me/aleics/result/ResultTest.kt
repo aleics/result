@@ -105,6 +105,18 @@ class ResultTest {
     }
 
     @Test
+    fun getOrElse() {
+        val success = Result.Success<String, Exception>("hello")
+        val failure = Result.Failure<String, Exception>(Exception("Something went wrong"))
+
+        val mappedSuccess = success.getOrElse { "SHOULD NOT HAPPEN!" }
+        val mappedFailure = failure.getOrElse { "hello" }
+
+        assertEquals(mappedSuccess, "hello")
+        assertEquals(mappedFailure, "hello")
+    }
+
+    @Test
     fun throwOnFailure() {
         val success = Result.Success<String, Exception>("hello")
         val failure = Result.Failure<String, Exception>(Exception("Something went wrong"))
